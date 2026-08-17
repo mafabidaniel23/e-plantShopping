@@ -1,68 +1,157 @@
-import React from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { removeItem, updateQuantity } from './CartSlice';
-import './CartItem.css';
+import { useDispatch, useSelector } from "react-redux";
+import { Link } from "react-router-dom";
 
-const CartItem = ({ onContinueShopping }) => {
-  const cart = useSelector(state => state.cart.items);
+import {
+  increaseQuantity,
+  decreaseQuantity,
+  removeFromCart,
+} from "../redux/CartSlice";
+
+function CartItem() {
   const dispatch = useDispatch();
 
-  // Calculate total amount for all products in the cart
-  const calculateTotalAmount = () => {
- 
-  };
+  const cartItems = useSelector((state) => state.cart.items);
 
-  const handleContinueShopping = (e) => {
-   
-  };
+  const totalItems = cartItems.reduce(
+    (total, item) => total + item.quantity,
+    0
+  );
 
+  const totalCost = cartItems.reduce(
+    (total, item) => total + item.price * item.quantity,
+    0
+  );
 
+  if (cartItems.length === 0) {
+    return (
+      <main className="cart-page">
+        <section className="empty-cart">
+          <div className="empty-cart-icon">🛒</div>
 
-  const handleIncrement = (item) => {
-  };
+          <h1>Your Cart is Empty</h1>
 
-  const handleDecrement = (item) => {
-   
-  };
+          <p>
+            You haven't added any plants yet. Explore our collection and find
+            something beautiful for your home.
+          </p>
 
-  const handleRemove = (item) => {
-  };
-
-  // Calculate total cost based on quantity for an item
-  const calculateTotalCost = (item) => {
-  };
+          <Link to="/plants" className="continue-button">
+            Continue Shopping
+          </Link>
+        </section>
+      </main>
+    );
+  }
 
   return (
-    <div className="cart-container">
-      <h2 style={{ color: 'black' }}>Total Cart Amount: ${calculateTotalAmount()}</h2>
-      <div>
-        {cart.map(item => (
-          <div className="cart-item" key={item.name}>
-            <img className="cart-item-image" src={item.image} alt={item.name} />
-            <div className="cart-item-details">
-              <div className="cart-item-name">{item.name}</div>
-              <div className="cart-item-cost">{item.cost}</div>
-              <div className="cart-item-quantity">
-                <button className="cart-item-button cart-item-button-dec" onClick={() => handleDecrement(item)}>-</button>
-                <span className="cart-item-quantity-value">{item.quantity}</span>
-                <button className="cart-item-button cart-item-button-inc" onClick={() => handleIncrement(item)}>+</button>
-              </div>
-              <div className="cart-item-total">Total: ${calculateTotalCost(item)}</div>
-              <button className="cart-item-delete" onClick={() => handleRemove(item)}>Delete</button>
-            </div>
+    <main className="cart-page">
+      <section className="cart-header-section">
+        <div>
+          <p className="eyebrow">YOUR SELECTION</p>
+          <h1>Shopping Cart</h1>
+          <p>
+            You have {totalItems}{" "}
+            {totalItems === 1 ? "plant" : "plants"} in your cart.
+          </p>
+        </div>
+      </section>
+
+      <section className="cart-layout">
+        <div className="cart-items-container">
+          {cartItems.map((item) => {
+            const itemTotal = item.price * item.quantity;
+
+            return (
+              <article className="cart-item-card" key={item.id}>
+                <img
+                  src={item.image}
+                  alt={item.name}
+                  className="cart-item-image"
+                />
+
+                <div className="cart-item-details">
+                  <span className="plant-category">HOUSEPLANT</span>
+
+                  <h2>{item.name}</h2>
+
+                  <p className="cart-unit-price">
+                    Unit Price: ${item.price.toFixed(2)}
+                  </p>
+
+                  <div className="quantity-controls">
+                    <button
+                      className="quantity-button"
+                      onClick={() => dispatch(decreaseQuantity(item.id))}
+                      aria-label={`Decrease ${item.name} quantity`}
+                    >
+                      −
+                    </button>
+
+                    <span className="quantity">
+                      {item.quantity}
+                    </span>
+
+                    <button
+                      className="quantity-button"
+                      onClick={() => dispatch(increaseQuantity(item.id))}
+                      aria-label={`Increase ${item.name} quantity`}
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
+
+                <div className="cart-item-total">
+                  <span>Total</span>
+
+                  <strong>${itemTotal.toFixed(2)}</strong>
+
+                  <button
+                    className="delete-button"
+                    onClick={() => dispatch(removeFromCart(item.id))}
+                  >
+                    Delete
+                  </button>
+                </div>
+              </article>
+            );
+          })}
+        </div>
+
+        <aside className="cart-summary">
+          <h2>Order Summary</h2>
+
+          <div className="summary-row">
+            <span>Total Plants</span>
+            <strong>{totalItems}</strong>
           </div>
-        ))}
-      </div>
-      <div style={{ marginTop: '20px', color: 'black' }} className='total_cart_amount'></div>
-      <div className="continue_shopping_btn">
-        <button className="get-started-button" onClick={(e) => handleContinueShopping(e)}>Continue Shopping</button>
-        <br />
-        <button className="get-started-button1">Checkout</button>
-      </div>
-    </div>
+
+          <div className="summary-row">
+            <span>Number of Plant Types</span>
+            <strong>{cartItems.length}</strong>
+          </div>
+
+          <div className="summary-divider"></div>
+
+          <div className="summary-total">
+            <span>Total Cost</span>
+            <strong>${totalCost.toFixed(2)}</strong>
+          </div>
+
+          <button
+            className="checkout-button"
+            onClick={() => alert("Checkout is Coming Soon!")}
+          >
+            Checkout
+          </button>
+
+          <Link to="/plants" className="continue-button">
+            Continue Shopping
+          </Link>
+        </aside>
+      </section>
+    </main>
   );
-};
+}
 
 export default CartItem;
-
-
