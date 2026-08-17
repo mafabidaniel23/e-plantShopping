@@ -1,49 +1,74 @@
+import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
 
-import React, { useState } from 'react';
-import ProductList from './ProductList';
-import './App.css';
-import AboutUs from './AboutUs';
+import Header from "./components/Header";
+import AboutUs from "./components/AboutUs";
+import ProductList from "./components/ProductList";
+import CartItem from "./components/CartItem";
+
+import "./App.css";
+
+function Home() {
+  return (
+    <main className="landing-page">
+      <div className="landing-overlay">
+        <div className="landing-content">
+          <div className="landing-logo">🌿</div>
+
+          <p className="landing-small-text">
+            WELCOME TO YOUR INDOOR PARADISE
+          </p>
+
+          <h1>Paradise Nursery</h1>
+
+          <div className="landing-line"></div>
+
+          <p className="landing-description">
+            Discover beautiful houseplants carefully selected to bring
+            freshness, natural beauty, and a peaceful atmosphere into your
+            home. From easy-care indoor plants to vibrant tropical varieties,
+            Paradise Nursery helps you create your perfect green space.
+          </p>
+
+          <Link to="/plants" className="get-started-button">
+            Get Started
+            <span>→</span>
+          </Link>
+        </div>
+      </div>
+    </main>
+  );
+}
 
 function App() {
-  
-  const [showProductList, setShowProductList] = useState(false);
-
-  const handleGetStartedClick = () => {
-    setShowProductList(true);
-  };
-
-  const handleHomeClick = () => {
-    setShowProductList(false);
-  };
-
   return (
-    <div className="app-container">
-      <div className={`landing-page ${showProductList ? 'fade-out' : ''}`}>
-        <div className="background-image"></div>
-        <div className="content">
-         <div className="landing_content">
-         <h1>Welcome To Paradise Nursery</h1>
-          <div className="divider"></div>
-          <p>Where Green Meets Serenity</p>
-         
-          <button className="get-started-button" onClick={handleGetStartedClick}>
-            Get Started
-          </button>
-         </div>
-          <div className="aboutus_container">
-          <AboutUs/>
-          </div>
-          </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Home />} />
 
-      </div>
-      <div className={`product-list-container ${showProductList ? 'visible' : ''}`}>
-        <ProductList onHomeClick={handleHomeClick}/>
-      </div>
-    </div>
+        <Route
+          path="/plants"
+          element={
+            <>
+              <Header />
+              <ProductList />
+            </>
+          }
+        />
+
+        <Route
+          path="/cart"
+          element={
+            <>
+              <Header />
+              <CartItem />
+            </>
+          }
+        />
+
+        <Route path="*" element={<Home />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
 export default App;
-
-
-
